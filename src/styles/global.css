@@ -1,0 +1,29 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@theme {
+  --spacing: 0.25rem /* 4px */;
+  --layout-base: 70rem;
+  --layout-full: 100%;
+}
+
+@utility layout-* {
+  --layout-max-width: --value(--layout-*);
+  --layout-padding: calc(var(--spacing) * 8);
+
+  display: grid;
+
+  place-content: center;
+  grid-template-columns:
+    minmax(var(--layout-padding), 1fr)
+    min(var(--layout-max-width), 100% - var(--layout-padding) * 2)
+    minmax(var(--layout-padding), 1fr);
+
+  & > * {
+    grid-column: 2 / 3;
+  }
+
+  & > .full-width {
+    grid-column: 1 / -1;
+  }
+}
