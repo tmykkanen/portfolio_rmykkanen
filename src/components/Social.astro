@@ -1,5 +1,6 @@
 ---
 import { Icon } from "astro-icon/components";
+import { Button } from "./ui/button";
 
 interface Props {
   platform: string;
@@ -9,10 +10,11 @@ interface Props {
 const { platform, username } = Astro.props;
 ---
 
-<div class="flex gap-2 items-center">
+<Button
+  variant={"ghost"}
+  as="a"
+  href={`https://www.${platform}.com/${username}`}
+>
   <Icon name={`simple-icons:${platform}`} />
-  <a
-    href={`https://www.${platform}.com/${username}`}
-    class="hover:text-[#ED5007]">{platform}</a
-  >
-</div>
+  {platform}
+</Button>
