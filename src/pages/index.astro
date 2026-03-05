@@ -13,8 +13,15 @@ import Text from "../components/Text.astro";
       class={"object-cover rounded-full w-[500px] aspect-square"}
     />
     <div class="flex flex-col gap-4">
-      <Text as="h1" variant="mainHeading">Ruby Mykkanen</Text>
-      <Text as="h2" variant="majorHeading"
+      <Text
+        as="h1"
+        variant="mainHeading"
+        class:list={"text-center lg:text-left"}>Ruby Mykkanen</Text
+      >
+      <Text
+        as="h2"
+        variant="majorHeading"
+        class:list={"text-center lg:text-left"}
         >Engineer, Student, Botanist, Musician</Text
       >
     </div>

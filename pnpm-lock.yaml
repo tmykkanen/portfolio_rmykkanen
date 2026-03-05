@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@data-slot/dialog':
+        specifier: ^0.2.111
+        version: 0.2.111
       '@data-slot/tabs':
         specifier: ^0.2.107
         version: 0.2.107
@@ -129,6 +132,12 @@ packages:
 
   '@data-slot/core@0.2.107':
     resolution: {integrity: sha512-e25JddkOrZxOk7TqhAwOdcu8LuV+xSnE2nsBimO1VhFmelsdIsLWyd1MDeBYsJdMzxjnm5Q4UW2/EYqoX88WUg==}
+
+  '@data-slot/core@0.2.111':
+    resolution: {integrity: sha512-2P8M12X+HG0KyYOoAZJcfUdM/fr8lMnQd8ediJ9m9EwBGYlX0y2wLW766ikyH0J8801K3f8zZUm9cL3p5wX0Nw==}
+
+  '@data-slot/dialog@0.2.111':
+    resolution: {integrity: sha512-9LiJ4SA+vIWqErfranhMOlHktM9BO/ZufbRQWV0zZ8fYhfattw1DMGgyg1GP/SplVvaY6+riJNKQm2Ya9GW45Q==}
 
   '@data-slot/tabs@0.2.107':
     resolution: {integrity: sha512-TdezIv3/+TqpyB3WDjsufLF8rTfo/pm02LK+lVr8dzC4L16T2zTEqPtxx3RJImkoPj7F8OPXv7lZZrxVME8mOA==}
@@ -2364,6 +2373,12 @@ snapshots:
       fontkitten: 1.0.2
 
   '@data-slot/core@0.2.107': {}
+
+  '@data-slot/core@0.2.111': {}
+
+  '@data-slot/dialog@0.2.111':
+    dependencies:
+      '@data-slot/core': 0.2.111
 
   '@data-slot/tabs@0.2.107':
     dependencies:

@@ -9,6 +9,7 @@
     "preview": "astro preview"
   },
   "dependencies": {
+    "@data-slot/dialog": "^0.2.111",
     "@data-slot/tabs": "^0.2.107",
     "@iconify-json/simple-icons": "^1.2.72",
     "@lucide/astro": "^0.576.0",
