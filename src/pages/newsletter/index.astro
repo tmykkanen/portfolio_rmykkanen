@@ -1,0 +1,167 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Text from "@/components/Text.astro";
+
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldLegend,
+  FieldSet,
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+---
+
+<Layout>
+  <Text as="h1" variant="mainHeading"> Monthly Newsletter - CLIENT</Text>
+  <Text>
+    Here's where I post a monthly in-depth update on what I've been up to!
+  </Text>
+  <Card class="p-8 max-w-lg">
+    <form id="client-action-form" class="w-full max-w-xl" novalidate>
+      <FieldSet>
+        <FieldLegend
+          ><Text as="span" variant="majorHeading"
+            >Subscribe to Newsletter
+          </Text></FieldLegend
+        >
+        <FieldGroup>
+          <Field>
+            <FieldLabel for="name" class={"sr-only"}>Name</FieldLabel>
+            <Input
+              id="name"
+              name="name"
+              placeholder="Full Name"
+              class={"bg-primary text-primary-foreground placeholder:text-primary-foreground/50"}
+            />
+            <FieldError
+              forceMount
+              class="hidden"
+              data-error-for="name"
+              class="text-secondary"
+            />
+          </Field>
+
+          <Field>
+            <FieldLabel for="email" class={"sr-only"}>Email</FieldLabel>
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="mail@example.com"
+              class={"bg-primary text-primary-foreground placeholder:text-primary-foreground/50"}
+            />
+            <FieldError
+              forceMount
+              class="hidden"
+              data-error-for="email"
+              class="text-secondary"
+            />
+          </Field>
+
+          <div class="flex gap-4">
+            <Button type="submit" class="w-fit" data-submit-button>
+              <Spinner data-icon class="hidden" />
+              <span data-submit-label>Subscribe</span>
+            </Button>
+            <Button
+              type="reset"
+              variant="outline"
+              class="w-fit"
+              data-reset-button
+            >
+              Reset
+            </Button>
+          </div>
+        </FieldGroup>
+      </FieldSet>
+    </form>
+  </Card>
+</Layout>
+
+<script>
+  import { actions, isInputError } from "astro:actions";
+
+  const form = document.getElementById(
+    "client-action-form",
+  ) as HTMLFormElement | null;
+  const submitButton = form?.querySelector("[data-submit-button]");
+  const resetButton = form?.querySelector("[data-reset-button]");
+  const submitLabel = form?.querySelector("[data-submit-label]");
+  const errorFieldName = form?.querySelector('[data-error-for="name"]');
+  const errorFieldEmail = form?.querySelector('[data-error-for="email"]');
+  const submitSpinner = submitButton?.querySelector('[data-slot="spinner"]');
+  const idleLabel =
+    submitLabel instanceof HTMLElement
+      ? submitLabel.textContent || "Subscribe"
+      : "Subscribe";
+  const wait = (ms: number) =>
+    new Promise((resolve) => setTimeout(resolve, ms));
+
+  const setSubmitting = (submitting: boolean) => {
+    if (submitButton instanceof HTMLButtonElement) {
+      submitButton.disabled = submitting;
+    }
+
+    if (submitSpinner instanceof Element) {
+      submitSpinner.classList.toggle("hidden", !submitting);
+    }
+    if (submitLabel instanceof HTMLElement) {
+      submitLabel.textContent = submitting ? "Submitting..." : idleLabel;
+    }
+  };
+
+  const clearErrors = () => {
+    form?.querySelectorAll("[data-error-for]").forEach((el) => {
+      if (!(el instanceof HTMLElement)) return;
+
+      el.textContent = "";
+      el.classList.add("hidden");
+    });
+  };
+
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    // resetErrors();
+    setSubmitting(true);
+    clearErrors();
+
+    const formData = new FormData(form);
+
+    const [result] = await Promise.all([
+      actions.subscribeClient(formData),
+      actions.hello(),
+      wait(900),
+    ]);
+    setSubmitting(false);
+
+    if (result.error && isInputError(result.error)) {
+      const fields = result.error.fields;
+
+      for (const [field, errors] of Object.entries(fields)) {
+        const node = form?.querySelector(`[data-error-for="${field}"]`);
+        if (!(node instanceof HTMLElement)) continue;
+
+        node.textContent = errors[0];
+        node.classList.remove("hidden");
+      }
+
+      // write message text into [data-error-for] nodes and remove `hidden`
+      return;
+    }
+
+    if (result.data) {
+      form.reset();
+    }
+  });
+
+  form?.addEventListener("reset", () => {
+    setSubmitting(false);
+    clearErrors();
+    // clear custom error nodes for [data-error-for]
+  });
+</script>
