@@ -1,17 +1,16 @@
 ---
-import logo from "../assets/logo.webp";
-import { Image } from "astro:assets";
+import Logo from "../assets/logo.svg";
 import Button from "../components/ui/button/Button.astro";
 ---
 
-<header class="layout-full sticky top-0 bg-[#f7f5f350]">
+<header class="layout-full sticky top-0 backdrop-blur-sm z-50 bg-muted/80">
   <nav class="py-4 md:items-center flex justify-between">
     <a
       href="/"
-      class="font-(family-name:--font-oswald) text-2xl font-bold text-primary flex gap-2 items-center"
+      class="font-(family-name:--font-lato) text-2xl font-bold text-primary flex gap-2 items-center"
     >
-      <Image src={logo} alt={"logo"} class="w-[30px] aspect-square" />
-
+      <!-- Set different color with color={'var(--***)'} -->
+      <Logo width={30} height={30} />
       Ruby Mykkanen
     </a>
 
@@ -21,7 +20,7 @@ import Button from "../components/ui/button/Button.astro";
     </label>
 
     <ul
-      class="flex flex-col sm:flex-row font-(family-name:--font-cutive-mono) uppercase text-[#4A5759] peer-not-checked:hidden lg:peer-not-checked:flex animate-in fade-in duration-500 gap-2"
+      class="flex flex-col sm:flex-row uppercase peer-not-checked:hidden lg:peer-not-checked:flex animate-in fade-in duration-500 gap-2"
     >
       <li>
         <Button variant={"ghost"} as="a" href={"/"}>Home</Button>
@@ -31,18 +30,33 @@ import Button from "../components/ui/button/Button.astro";
         <Button variant={"ghost"} as="a" href={"/projects"}>Projects</Button>
       </li>
       <li>
-        <Button variant={"ghost"} as="a" href={"/contact"}>Contact</Button>
-      </li>
-      <li>
-        <Button variant={"ghost"} as="a" href={"/newsletter"}>Newsletter</Button
+        <Button variant={"ghost"} as="a" href={"/newsletters"}
+          >Newsletter</Button
         >
       </li>
-      <li><Button variant={"ghost"} as="a" href={"/tags"}>Tags</Button></li>
+      <li>
+        <Button variant={"ghost"} as="a" href={"/contact"}>Contact</Button>
+      </li>
     </ul>
   </nav>
 </header>
 
 <style>
+  header {
+    animation: header-scroll linear;
+    animation-timeline: scroll();
+    animation-range: 0 300px;
+  }
+
+  @keyframes header-scroll {
+    from {
+      background-color: color-mix(in srgb, var(--color-muted), transparent 80%);
+    }
+    to {
+      background-color: color-mix(in srgb, var(--color-muted), transparent 20%);
+    }
+  }
+
   nav label {
     display: none;
   }
@@ -105,7 +119,7 @@ import Button from "../components/ui/button/Button.astro";
       display: inline-block;
       width: 32px;
       height: 4px;
-      background-color: #4a5759;
+      background-color: var(--primary);
       border-radius: 3px;
       margin-left: var(--space-small);
     }
@@ -117,7 +131,7 @@ import Button from "../components/ui/button/Button.astro";
       position: absolute;
       width: 32px;
       height: 4px;
-      background-color: #4a5759;
+      background-color: var(--primary);
       border-radius: 3px;
     }
 
