@@ -1,11 +1,8 @@
 // @ts-check
-import { defineConfig, fontProviders } from "astro/config";
-
-import tailwindcss from "@tailwindcss/vite";
-
-import icon from "astro-icon";
-
 import netlify from "@astrojs/netlify";
+import tailwindcss from "@tailwindcss/vite";
+import icon from "astro-icon";
+import { defineConfig, fontProviders } from "astro/config";
 
 // https://astro.build/config
 export default defineConfig({
@@ -28,11 +25,6 @@ export default defineConfig({
       {
         name: "Cutive Mono",
         cssVariable: "--font-cutive-mono",
-        provider: fontProviders.google(),
-      },
-      {
-        name: "Abril Fatface",
-        cssVariable: "--font-abril-fatface",
         provider: fontProviders.google(),
       },
     ],
