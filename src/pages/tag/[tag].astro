@@ -5,7 +5,6 @@ import {
   Card,
   CardHeader,
   CardTitle,
-  CardDescription,
   CardContent,
   CardFooter,
   CardMedia,
@@ -17,25 +16,34 @@ import { getCollection } from "astro:content";
 
 export const getStaticPaths = async () => {
   const allProjects = await getCollection("projects");
+  const allNewsletters = await getCollection("newsletters");
 
-  const allTags = new Set(
-    allProjects.flatMap((project) => project.data.tags ?? []),
-  );
+  const allTags = new Set([
+    ...allProjects.flatMap((project) => project.data.tags ?? []),
+    ...allNewsletters.flatMap((newsletter) => newsletter.data.tags ?? []),
+  ]);
 
   return [...allTags].map((tag) => {
     const projects = allProjects.filter((project) =>
       project.data.tags?.includes(tag),
     );
-    return { params: { tag }, props: { projects } };
+    const newsletters = allNewsletters.filter((newsletter) =>
+      newsletter.data.tags?.includes(tag),
+    );
+    return { params: { tag }, props: { projects, newsletters } };
   });
 };
 
 const allImages = import.meta.glob<{ default: ImageMetadata }>(
-  "/src/assets/projects/**/*.{webp,jpg,png}",
+  [
+    "/src/assets/projects/**/*.{webp,jpg,png}",
+    "/src/assets/newsletters/**/*.{webp,jpg,png}",
+  ],
   { eager: true },
 );
 
-const { projects } = Astro.props;
+const { projects, newsletters } = Astro.props;
+const { tag } = Astro.params;
 
 projects.forEach((project) => {
   if (!allImages[`/src/assets/projects/${project.id}/featured.webp`]) {
@@ -44,47 +52,117 @@ projects.forEach((project) => {
     );
   }
 });
+
+newsletters.forEach((newsletter) => {
+  if (!allImages[`/src/assets/newsletters/${newsletter.id}/featured.webp`]) {
+    throw new Error(
+      `No featured image found for newsletter ${newsletter.id}. Add a an image titled 'featured.webp' to folder '/src/assets/newsletter/${newsletter.id}/'`,
+    );
+  }
+});
 ---
 
 <Layout>
-  <Text as="h1" variant="mainHeading">Projects</Text>
-  <div class="grid md:grid-cols-2 gap-8">
-    {
-      projects.map((project) => (
-        <Card class:list={"w-full gap-4 py-4"}>
-          <CardHeader class="px-4">
-            <CardTitle>
-              <Text
-                as="a"
-                variant="majorHeading"
-                href={`/projects/${project.id}`}
-              >
-                {project.data.title}
-              </Text>
-            </CardTitle>
-          </CardHeader>
-          <CardContent class="flex gap-4 flex-col md:flex-row px-4">
-            <CardMedia class="sm:flex-1">
-              <Image
-                src={
-                  allImages[`/src/assets/projects/${project.id}/featured.webp`]
-                    .default
-                }
-                alt="Electronics project"
-              />
-            </CardMedia>
-            <Text class={"flex-2"}>{project.data.description}</Text>
-          </CardContent>
-          <CardFooter class="flex gap-4 justify-start">
-            {project.data.tags &&
-              project.data.tags.map((tag) => (
-                <Badge>
-                  <a href={`/tag/${tag}`}>{tag}</a>
-                </Badge>
-              ))}
-          </CardFooter>
-        </Card>
-      ))
-    }
-  </div>
+  <h1 class="sr-only">Projects and Newsletters Tagged with {tag}</h1>
+  {
+    projects.length > 0 && (
+      <div class="flex flex-col gap-8 justify-center">
+        <div class="flex gap-4 items-center">
+          <Text as="h2" variant="majorHeading">
+            Projects tagged with{" "}
+          </Text>
+          <Badge class="p-4">{tag}</Badge>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8">
+          {projects.map((project) => (
+            <Card class:list={"w-full gap-4 py-4"}>
+              <CardHeader class="px-4">
+                <CardTitle>
+                  <Text
+                    as="a"
+                    variant="majorHeading"
+                    href={`/projects/${project.id}`}
+                  >
+                    {project.data.title}
+                  </Text>
+                </CardTitle>
+              </CardHeader>
+              <CardContent class="flex gap-4 flex-col md:flex-row px-4">
+                <CardMedia class="sm:flex-1">
+                  <Image
+                    src={
+                      allImages[
+                        `/src/assets/projects/${project.id}/featured.webp`
+                      ].default
+                    }
+                    alt="project image"
+                  />
+                </CardMedia>
+                <Text class={"flex-2"}>{project.data.description}</Text>
+              </CardContent>
+              <CardFooter class="flex gap-4 justify-start">
+                {project.data.tags &&
+                  project.data.tags.map((tag) => (
+                    <Badge>
+                      <a href={`/tag/${tag}`}>{tag}</a>
+                    </Badge>
+                  ))}
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+      </div>
+    )
+  }
+  {
+    newsletters.length > 0 && (
+      <div class="flex flex-col gap-8 justify-center">
+        <div class="flex gap-4 items-center">
+          <Text as="h2" variant="majorHeading">
+            Newsletters tagged with
+          </Text>
+          <Badge class="p-4">{tag}</Badge>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8">
+          {newsletters.map((newsletter) => (
+            <Card class:list={"w-full gap-4 py-4"}>
+              <CardHeader class="px-4">
+                <CardTitle>
+                  <Text
+                    as="a"
+                    variant="majorHeading"
+                    href={`/newsletters/${newsletter.id}`}
+                  >
+                    {newsletter.data.title}
+                  </Text>
+                </CardTitle>
+              </CardHeader>
+              <CardContent class="flex gap-4 flex-col md:flex-row px-4">
+                <CardMedia class="sm:flex-1">
+                  <Image
+                    src={
+                      allImages[
+                        `/src/assets/newsletters/${newsletter.id}/featured.webp`
+                      ].default
+                    }
+                    alt="project image"
+                  />
+                </CardMedia>
+              </CardContent>
+              <CardFooter class="flex gap-4 justify-start">
+                {newsletter.data.tags &&
+                  newsletter.data.tags.map((tag) => (
+                    <Badge>
+                      <a href={`/tag/${tag}`}>{tag}</a>
+                    </Badge>
+                  ))}
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+      </div>
+    )
+  }
 </Layout>
